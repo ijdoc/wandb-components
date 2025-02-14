@@ -11,11 +11,3 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
-
-body {
-  margin-top: 1.2em;
-  display: flex;
-  place-items: center;
-  background-color: #fff;
-}
-
