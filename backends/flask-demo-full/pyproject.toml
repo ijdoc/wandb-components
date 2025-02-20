@@ -1,0 +1,11 @@
+[project]
+name = "flask-demo-full"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "flask>=3.1.0",
+    "gunicorn>=23.0.0",
+    "weave>=0.51.33",
+]
