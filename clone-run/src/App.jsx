@@ -12,11 +12,7 @@ import
 } from "@mui/material";
 import "./App.css";
 
-const Endpoints = {
-  LAMBDA: "https://olq5lzy0cl.execute-api.us-east-1.amazonaws.com/example-stage-05b1333/",
-  SAGEMAKER: "https://jw16y0bdbl.execute-api.us-east-1.amazonaws.com/example-stage-ee6a3d4/",
-};
-
+const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
 const BtnState = {
   DISABLED: 0,
   ENABLED: 1,
@@ -57,7 +53,7 @@ function App ()
 
     try
     {
-      const response = await fetch(Endpoints.LAMBDA, {
+      const response = await fetch(`${backendEndpoint}/clone-run`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

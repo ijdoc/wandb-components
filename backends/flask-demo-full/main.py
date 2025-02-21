@@ -1,7 +1,25 @@
 from flask import Flask, jsonify, request
+from flask_cors import CORS
+import weave
+from openai import OpenAI
 
 # Setup
 app = Flask(__name__)
+CORS(app, origins=["http://localhost:5173"])
+weave.init("components")
+client = OpenAI()
+
+@weave.op()
+def get_answer(question):
+    # Get completion from OpenAI
+    completion = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{
+            "role": "user",
+            "content": question
+        }]
+    )
+    return completion.choices[0].message.content
 
 @app.route('/ping')
 def ping():
@@ -9,33 +27,22 @@ def ping():
 
 @app.route('/qa-bot', methods=['POST'])
 def qa_bot_completion():
-    from openai import OpenAI
-    import weave
-    weave.init("components")
-    client = OpenAI()
     try:
         # Get question from request body
         data = request.get_json()
         if not data or 'question' not in data:
             return jsonify({'error': 'No question provided'}), 400
-            
+
         question = data['question']
-        
-        # Get completion from OpenAI
-        completion = client.chat.completions.create(
-            model="gpt-4o-mini",
-            max_tokens=1024,
-            messages=[{
-                "role": "user",
-                "content": question
-            }]
-        )
-        
+
+        result, call = get_answer.call(question)
+
         # Return the response
         return jsonify({
-            'answer': completion.content[0].text
+            'answer': result,
+            'url': f"https://wandb.ai/{call.project_id}/r/call/{call.id}",
         })
-        
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
