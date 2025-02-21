@@ -50,7 +50,7 @@ function App ()
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("info");
   const [open, setOpen] = React.useState(false);
-  const [answer, setAnswer] = React.useState("Hello! I'm a Q&A bot. Ask me anything!");
+  const [answer, setAnswer] = React.useState("");
 
   const updateName = (value) =>
   {
@@ -133,7 +133,7 @@ function App ()
         <Card sx={{ width: '100%', height: '100%', padding: '10px', paddingBottom: '90px' }}>
           <CardHeader
             avatar={<Icon path={mdiRobotExcited} size={2} />}
-            title="Q&A Bot"
+            title="Hello! I'm a Q&A bot. Ask me anything!"
             subheader={< Link href="https://wandb.ai/wandb/qa-bot">wandb.ai/wandb/qa-bot</Link>}
             align="left"
           />
