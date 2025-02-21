@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOTENV_DEPLOY: ${{ secrets.DOTENV_DEPLOY }}
-      DOTENV_VITE: ${{ secrets.DOTENV_VITE }}
+      DOTENV_VITE_DEPLOY: ${{ secrets.DOTENV_VITE_DEPLOY }}
     steps:
     - name: 📌 Setup python
       uses: actions/setup-python@v4
@@ -28,5 +28,8 @@ jobs:
     - name: 📌 Run script
       run: |
         echo "$DOTENV_DEPLOY" > ".env"
-        echo "$DOTENV_VITE" > ".env.vite"
+        echo "$DOTENV_VITE_DEPLOY" > ".env.vite"
+        # log_components.py expects the following .env files:
+        # 1. .env.vite to build components
+        # 2. .env to log components to W&B
         UV_ENV_FILE=".env" uv run python log_components.py
