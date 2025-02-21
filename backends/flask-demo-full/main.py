@@ -7,9 +7,9 @@ import os
 # Setup
 app = Flask(__name__)
 CORS(app, origins=[os.getenv("ALLOWED_ORIGIN")])
-weave.init(f"{os.getenv("WANDB_ENTITY")}/components")
 client = OpenAI()
 
+# Weave ops to trace
 @weave.op()
 def get_answer(question):
     # Get completion from OpenAI
@@ -29,6 +29,7 @@ def ping():
 @app.route('/qa-bot', methods=['POST'])
 def qa_bot_completion():
     try:
+        weave.init(f"{os.getenv("WANDB_ENTITY")}/components")
         # Get question from request body
         data = request.get_json()
         if not data or 'question' not in data:
@@ -37,11 +38,13 @@ def qa_bot_completion():
         question = data['question']
 
         result, call = get_answer.call(question)
+        url = f"https://wandb.ai/{call.project_id}/r/call/{call.id}"
+        print(url)
 
         # Return the response
         return jsonify({
             'answer': result,
-            'url': f"https://wandb.ai/{call.project_id}/r/call/{call.id}",
+            'url': url,
         })
 
     except Exception as e:
