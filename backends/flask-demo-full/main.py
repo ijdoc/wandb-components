@@ -7,7 +7,7 @@ import os
 # Setup
 app = Flask(__name__)
 CORS(app, origins=[os.getenv("ALLOWED_ORIGIN")])
-weave.init("components")
+weave.init(f"{os.getenv("WANDB_ENTITY")}/components")
 client = OpenAI()
 
 @weave.op()
