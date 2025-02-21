@@ -14,7 +14,7 @@ def main():
             # Build component path
             component_path = os.path.join(script_dir, component)
             # Build component and print output
-            os.system(f"cd {component_path} && npm run build")
+            os.system(f"cd {component_path} && npm install && npm run build")
             # Log component
             wandb.log(
                 {
