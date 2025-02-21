@@ -7,16 +7,16 @@ import Stack from '@mui/material/Stack';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
 import CardContent from '@mui/material/CardContent';
-import Divider from '@mui/material/Divider';
 import Icon from '@mdi/react';
 import { mdiRobotExcited } from '@mdi/js';
 import Link from '@mui/material/Link';
 import { TextField, FormControl, Button } from "@mui/material";
 import Snackbar from '@mui/material/Snackbar';
-import { teal } from '@mui/material/colors';
+import { teal, grey } from '@mui/material/colors';
 import Typography from '@mui/material/Typography';
+import PersonIcon from '@mui/icons-material/Person';
+import Avatar from '@mui/material/Avatar';
 import { MuiMarkdown, getOverrides } from 'mui-markdown';
 import "./App.css";
 
@@ -25,34 +25,26 @@ const wandbEntity = import.meta.env.VITE_WANDB_ENTITY;
 const wandbProject = import.meta.env.VITE_WANDB_PROJECT;
 const weaveOp = import.meta.env.VITE_WEAVE_OP;
 
-const primaryColor = teal;
 const mainTheme = createTheme({
   palette: {
     primary: teal,
+    secondary: grey,
   },
 });
 
-// TODO: Replace with flask app coordinates;
 const BtnState = {
   DISABLED: 0,
   ENABLED: 1,
   LOADING: 2,
 };
 
-const FnState = {
-  READY: 0,
-  RUNNING: 1,
-  SUCCESS: 2,
-  ERROR: 3,
-};
-
 function App ()
 {
   const [btnState, setBtnState] = useState(BtnState.DISABLED);
-  const [fnState, setFnState] = useState(FnState.READY);
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState("info");
-  const [open, setOpen] = React.useState(false);
+  const [isSnackbarOpen, setSnackbarOpen] = React.useState(false);
+  const [question, setQuestion] = React.useState("");
   const [answer, setAnswer] = React.useState("");
 
   const updateName = (value) =>
@@ -69,11 +61,10 @@ function App ()
   const sendMessage = async () =>
   {
     setBtnState(BtnState.LOADING);
-    setFnState(FnState.RUNNING);
-    const message = document.getElementById("messsage").value;
+    const question = document.getElementById("messsage").value;
     document.getElementById("messsage").value = "";
-
-    console.log(message);
+    setQuestion(question);
+    setAnswer("");
 
     try
     {
@@ -82,34 +73,31 @@ function App ()
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ "question": message }),
+        body: JSON.stringify({ "question": question }),
       });
       if (response.ok)
       {
         const data = await response.json(); // Read and parse the response body as JSON
-        setFnState(FnState.SUCCESS);
         setBtnState(BtnState.ENABLED);
         setAnswer(data.answer);
-        setAlertMsg("Message delivered!");
-        setAlertType("success");
-        setOpen(true);
+        // setAlertMsg("Message delivered!");
+        // setAlertType("success");
+        // setSnackbarOpen(true);
       } else
       {
         const errorMessage = await response.text(); // Parse error message if available
-        setFnState(FnState.ERROR);
         setBtnState(BtnState.ENABLED);
         console.log(response);
         setAlertMsg(errorMessage);
         setAlertType("error");
-        setOpen(true);
+        setSnackbarOpen(true);
       }
     } catch (error)
     {
-      setFnState(FnState.ERROR);
       setBtnState(BtnState.ENABLED);
       setAlertMsg(error.message);
       setAlertType("error");
-      setOpen(true);
+      setSnackbarOpen(true);
     }
     setBtnState(BtnState.DISABLED);
   };
@@ -119,8 +107,8 @@ function App ()
       <CssBaseline />
       <Snackbar
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-        open={open} autoHideDuration={6000}
-        onClose={() => setOpen(false)}>
+        open={isSnackbarOpen} autoHideDuration={6000}
+        onClose={() => setSnackbarOpen(false)}>
         <Alert
           severity={alertType}
           variant="filled"
@@ -134,29 +122,60 @@ function App ()
         padding: '0px',
       }}>
         <Card sx={{ width: '100%', height: '100%', padding: '10px', paddingBottom: '90px' }}>
-          <CardHeader
-            avatar={<Icon path={mdiRobotExcited} size={2} />}
-            title="Hello! I'm a Q&A bot. Ask me anything!"
-            subheader={<Link target="_blank" href={`https://wandb.ai/${wandbEntity}/${wandbProject}/weave/calls?filter={"opVersionRefs":["weave:///${wandbEntity}/${wandbProject}/op/${weaveOp}:*"]}`}>{wandbEntity}/{wandbProject}</Link>}
-            align="left"
-          />
-          <Divider />
           <CardContent align="left" sx={{ overflowY: 'auto', height: '100%' }}>
-            <MuiMarkdown overrides={{
-              ...getOverrides(), // This will keep the other default overrides.
-              h1: {
-                component: "h1",
-              },
-              h2: {
-                component: "h2",
-              },
-              h3: {
-                component: "h3",
-              },
-              h4: {
-                component: "h4",
-              },
-            }}>{answer}</MuiMarkdown>
+            <Stack spacing={1}>
+              <Stack direction="row" spacing={2} alignItems="center" justifyContent="flex-start">
+                <Paper elevation={2} sx={{ padding: '10px', paddingRight: '20px', backgroundColor: mainTheme.palette.primary[50] }}>
+                  <Stack direction="row" spacing={2} alignItems="center">
+                    <Avatar>
+                      <Icon path={mdiRobotExcited} size={1} />
+                    </Avatar>
+                    <div>
+                      {"Hello! I'm a Q&A bot. Ask me anything!"}<br />
+                      {<Link target="_blank" href={`https://wandb.ai/${wandbEntity}/${wandbProject}/weave/calls?filter={"opVersionRefs":["weave:///${wandbEntity}/${wandbProject}/op/${weaveOp}:*"]}`}>{wandbEntity}/{wandbProject}</Link>}
+                    </div>
+                  </Stack>
+                </Paper>
+                <div style={{ width: "20%" }}></div>
+              </Stack>
+              {question.length > 0 ?
+                <Stack direction="row" spacing={2} alignItems="center" justifyContent="flex-end">
+                  <div style={{ width: "20%" }}></div>
+                  <Paper elevation={2} align="right" sx={{ padding: '10px', paddingLeft: '20px', backgroundColor: mainTheme.palette.secondary[50] }}>
+                    <Stack direction="row" spacing={2} alignItems="center" justifyContent="flex-end">
+                      <div>
+                        {question}
+                      </div>
+                      <Avatar>
+                        <PersonIcon />
+                      </Avatar>
+                    </Stack>
+                  </Paper>
+                </Stack> : null
+              }
+              {answer.length > 0 ?
+                <Stack direction="row" spacing={2} alignItems="center" justifyContent="flex-start">
+                  <Paper elevation={2} sx={{ padding: '10px', paddingRight: '20px', backgroundColor: mainTheme.palette.primary[50] }}>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Avatar>
+                        <Icon path={mdiRobotExcited} size={1} />
+                      </Avatar>
+                      <div>
+                        <MuiMarkdown overrides={{
+                          ...getOverrides(), // This will keep the other default overrides.
+                          h1: { component: "h1" },
+                          h2: { component: "h2" },
+                          h3: { component: "h3" },
+                          h4: { component: "h4" },
+                        }}>{answer}
+                        </MuiMarkdown>
+                      </div>
+                    </Stack>
+                  </Paper>
+                  <div style={{ width: "20%" }}></div>
+                </Stack> : null
+              }
+            </Stack>
           </CardContent>
         </Card>
         <Paper elevation={12} sx={{ width: '100%' }}>
