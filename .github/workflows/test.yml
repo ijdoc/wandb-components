@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOTENV_TEST: ${{ secrets.DOTENV_TEST }}
+      DOTENV_VITE: ${{ secrets.DOTENV_VITE }}
     steps:
     - name: 📌 Setup python
       uses: actions/setup-python@v4
@@ -25,4 +26,5 @@ jobs:
     - name: 📌 Run script
       run: |
         echo "$DOTENV_TEST" > ".env"
+        echo "$DOTENV_VITE" > ".env.vite"
         UV_ENV_FILE=".env" uv run python log_components.py

@@ -10,11 +10,14 @@ def main():
     ) as run:
         # Get this script's directory
         script_dir = os.path.dirname(os.path.realpath(__file__))
+        dotenv_vite_path = os.path.join(script_dir, ".env.vite")
         for component in run.config["components"]:
             # Build component path
             component_path = os.path.join(script_dir, component)
             # Build component and print output
-            os.system(f"cd {component_path} && npm install && npm run build")
+            os.system(f"cd {component_path} && "
+                      f"cp {dotenv_vite_path} ./ && "
+                      "npm install && npm run build")
             # Log component
             wandb.log(
                 {
