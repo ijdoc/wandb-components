@@ -1,0 +1,31 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DOTENV_DEPLOY: ${{ secrets.DOTENV_DEPLOY }}
+    steps:
+    - name: 📌 Setup python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    - name: 📌 Checkout
+      uses: actions/checkout@v3
+    - name: 📌 Install dependencies
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        source $HOME/.local/bin/env
+        uv sync
+    - name: 📌 Run script
+      run: |
+        echo "$DOTENV_DEPLOY" > ".env"
+        UV_ENV_FILE=".env" uv run python log_components.py

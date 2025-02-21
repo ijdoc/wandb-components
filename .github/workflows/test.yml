@@ -1,0 +1,30 @@
+name: Test
+
+on: pull_request
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DOTENV_TEST: ${{ secrets.DOTENV_TEST }}
+      DOTENV_VITE: ${{ secrets.DOTENV_VITE }}
+    steps:
+    - name: 📌 Setup python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+    - name: 📌 Checkout
+      uses: actions/checkout@v3
+    - name: 📌 Install dependencies
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        # source $HOME/.local/bin/env
+        uv sync
+    - name: 📌 Log components
+      run: |
+        echo "$DOTENV_TEST" > ".env"
+        echo "$DOTENV_VITE" > ".env.vite"
+        UV_ENV_FILE=".env" uv run python log_components.py

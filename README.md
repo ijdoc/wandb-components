@@ -11,14 +11,32 @@ Weights & Biases (W&B) Components is a library of sample extensions you can log 
 ### Prerequisites
 
 #### Components
-- Components are typically built with [node](https://nodejs.org/en/download/package-manager), [react](https://react.dev/) and [vite](https://vitejs.dev/) into single HTML files so they can be logged to W&B as HTML media objects.
+- Components are typically built with [react](https://react.dev/)-[vite](https://vitejs.dev/) into single HTML files so they can be logged to W&B as HTML media objects.
 
 #### Backends
 - We typically use [uv](https://docs.astral.sh/uv/getting-started/installation/) to manage python environments and dependencies
 
+## Running Locally
+
+### Components
+
+```sh
+cd <the-component>
+npm run dev
+```
+
+### Demo Backend
+
+```sh
+cd backends/flask-demo-full
+UV_ENV_FILE=".env.local" uv run python main.py
+```
+
 ## Demo
 
-The backend at [backends/flask-render/](backends/flask-render/) provides endpoints for all sample components in this repo and it is deployed to a free instance on [render](https://render.com/).
+Demo components are automatically deployed to W&B using Github Actions.
+
+The backend at [backends/flask-demo-full/](backends/flask-demo-full/) provides endpoints for all sample components in this repo and it is deployed to a free[render](https://render.com/) instance.
 
 ## Repo Organization
 ```
