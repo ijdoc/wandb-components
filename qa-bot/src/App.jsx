@@ -21,6 +21,9 @@ import { MuiMarkdown, getOverrides } from 'mui-markdown';
 import "./App.css";
 
 const backendEndpoint = import.meta.env.VITE_BACKEND_ENDPOINT;
+const wandbEntity = import.meta.env.VITE_WANDB_ENTITY;
+const wandbProject = import.meta.env.VITE_WANDB_PROJECT;
+const weaveOp = import.meta.env.VITE_WEAVE_OP;
 
 const primaryColor = teal;
 const mainTheme = createTheme({
@@ -128,13 +131,13 @@ function App ()
       </Snackbar>
       <Stack spacing={1} sx={{
         height: '100vh',
-        padding: '10px',
+        padding: '0px',
       }}>
         <Card sx={{ width: '100%', height: '100%', padding: '10px', paddingBottom: '90px' }}>
           <CardHeader
             avatar={<Icon path={mdiRobotExcited} size={2} />}
             title="Hello! I'm a Q&A bot. Ask me anything!"
-            subheader={< Link href="https://wandb.ai/wandb/qa-bot">wandb.ai/wandb/qa-bot</Link>}
+            subheader={<Link target="_blank" href={`https://wandb.ai/${wandbEntity}/${wandbProject}/weave/calls?filter={"opVersionRefs":["weave:///${wandbEntity}/${wandbProject}/op/${weaveOp}:*"]}`}>{wandbEntity}/{wandbProject}</Link>}
             align="left"
           />
           <Divider />
