@@ -121,7 +121,7 @@ function App ()
         height: '100vh',
         padding: '0px',
       }}>
-        <Card sx={{ width: '100%', height: '100%', padding: '10px', paddingBottom: '90px' }}>
+        <Card sx={{ width: '100%', height: '100%', padding: '10px' }}>
           <CardContent align="left" sx={{ overflowY: 'auto', height: '100%' }}>
             <Stack spacing={1}>
               <Stack direction="row" spacing={2} alignItems="center" justifyContent="flex-start">
