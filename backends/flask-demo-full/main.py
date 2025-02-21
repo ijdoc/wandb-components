@@ -2,10 +2,11 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import weave
 from openai import OpenAI
+import os
 
 # Setup
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173"])
+CORS(app, origins=[os.getenv("ALLOWED_ORIGIN")])
 weave.init("components")
 client = OpenAI()
 
