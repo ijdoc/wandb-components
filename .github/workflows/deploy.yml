@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOTENV_DEPLOY: ${{ secrets.DOTENV_DEPLOY }}
+      DOTENV_VITE: ${{ secrets.DOTENV_VITE }}
     steps:
     - name: 📌 Setup python
       uses: actions/setup-python@v4
