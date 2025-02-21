@@ -16,7 +16,7 @@ def main():
             component_path = os.path.join(script_dir, component)
             # Build component and print output
             os.system(f"cd {component_path} && "
-                      f"cp {dotenv_vite_path} ./ && "
+                      f"cp {dotenv_vite_path} ./.env && "
                       "npm install && npm run build")
             # Log component
             wandb.log(
